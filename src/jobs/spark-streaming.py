@@ -1,31 +1,25 @@
 from time import sleep
 
-import pyspark
-import openai
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, when, udf
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from config.config import config
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
 
 def sentiment_analysis(comment) -> str:
     if comment:
-        openai.api_key = config['openai']['api_key']
-        completion = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages = [
-                {
-                    "role": "system",
-                    "content": """
+        prompt = PromptTemplate.from_template("""
                         You're a machine learning model with a task of classifying comments into POSITIVE, NEGATIVE, NEUTRAL.
                         You are to respond with one word from the option specified above, do not add anything else.
                         Here is the comment:
                         
                         {comment}
-                    """.format(comment=comment)
-                }
-            ]
-        )
-        return completion.choices[0].message['content']
+            """)
+        llm = ChatOpenAI(api_key=config['openai']['api_key'])
+        chain = prompt | llm | StrOutputParser()
+        return chain.invoke({'comment':comment})
     return "Empty"
 
 def start_streaming(spark):
@@ -33,7 +27,7 @@ def start_streaming(spark):
     while True:
         try:
             stream_df = (spark.readStream.format("socket")
-                         .option("host", "0.0.0.0")
+                         .option("host", "spark-master")
                          .option("port", 9999)
                          .load()
                          )
