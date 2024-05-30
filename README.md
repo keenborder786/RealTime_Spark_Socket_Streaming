@@ -18,7 +18,7 @@
     - Get the Schema Registry URL for your confluent kafka cluster and replace it with `schema_registry` in [config.py](src/config/config.py)
     - Create an Topic name `customers_review` with schema (AVRO Based) from [here](src/schema/reviews.schema.avsc)
     
-    - Replace `api_key` in in [config.py](src/config/config.py) with OPENAI-API Key.
+    - Replace `api_key` in [config.py](src/config/config.py) with OPENAI-API Key.
 
 
 - Download the Data
