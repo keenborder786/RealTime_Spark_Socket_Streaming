@@ -10,7 +10,7 @@
 
 - Set up Confluent (Kafka) Cluster and Configuration
 
-    - Go to ![Confluent Cloud](https://confluent.cloud/)
+    - Go to [Confluent Cloud](https://confluent.cloud/)
     - Create an environment with default cluster
     - Create an API Key for your Cluster and replace it with `sasl.username` and `sasl.password` in [config.py](src/config/config.py)
     - Get the Bootstrap server URL for your confluent kafka cluster and replace it with `bootstrap.servers` in [config.py](src/config/config.py)
